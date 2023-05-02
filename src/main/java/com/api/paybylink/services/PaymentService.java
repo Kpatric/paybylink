@@ -29,14 +29,14 @@ public class PaymentService {
 
 
     //http request using blocking http request
-    public Object getPayments(String billHash, String paymentChannel) throws JSONException {
+    public Object getPayments(Payment payRequest,String billHash, String paymentChannel) throws JSONException {
         String url = baseUrl + getEndPoint + "?billHash=" + billHash + "&paymentChannel=" + paymentChannel;
 
         var results = httpClient.getRestTemplate().getForObject(url, Object.class);
         Map<String, Object> map = (Map<String, Object>) results;
         JSONObject jsonObject = new JSONObject(map);
 
-        var paymentRequest = parsePayment(jsonObject);
+        var paymentRequest = parsePayment(payRequest,jsonObject);
 
 
         return postPayment(paymentRequest) ;
@@ -68,25 +68,25 @@ public class PaymentService {
     }
 
 
-    private Payment parsePayment(JSONObject jsonObject) throws JSONException {
+    public Payment parsePayment(Payment payment,JSONObject jsonObject) throws JSONException {
         return Payment.builder()
                 .originatorMSISDN(jsonObject.getJSONObject("bill").getString("msisdn"))
-                .payerClientCode("SAFKE")
-                .payerClientName("M-PESA")
-                .checkoutType("USSD_PUSH")
+                .payerClientCode(payment.getPayerClientCode())
+                .payerClientName(payment.getPayerClientName())
+                .checkoutType(payment.getCheckoutType())
                 .countryCode(jsonObject.getJSONObject("biller").getString("country"))
-                .requestOrigin("TINGG_SUBSCRIPTIONS_WEB")
+                .requestOrigin(payment.getRequestOrigin())
                 .msisdn(jsonObject.getJSONObject("bill").getString("msisdn"))
-                .language("en")
+                .language(payment.getLanguage())
                 .accountNumber(jsonObject.getJSONObject("bill").getString("accountNumber"))
                 .invoiceNumber("")
                 .currencyCode(jsonObject.getJSONObject("bill").getString("currencyCode"))
                 .amount(jsonObject.getJSONObject("bill").getDouble("dueAmount"))
-                .description("Payment for a bill")
+                .description(payment.getDescription())
                 .billingServiceID(jsonObject.getJSONObject("billingServiceResponse").getInt("billingServiceID"))
                 .billHash(jsonObject.getJSONObject("bill").getInt("billID"))
-                .paymentChannel("paybill")
-                .paymentCode("589036")
+                .paymentChannel(payment.getPaymentChannel())
+                .paymentCode(payment.getPaymentCode())
                 .build();
     }
 

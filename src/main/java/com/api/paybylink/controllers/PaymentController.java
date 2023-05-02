@@ -22,9 +22,9 @@ public class PaymentController {
 
 
     @GetMapping("/pay")
-    public Object getPaymentDetails(@RequestParam("billHash") String billHash,
+    public Object getPaymentDetails(@RequestBody Payment payRequest,@RequestParam("billHash") String billHash,
                                   @RequestParam("paymentChannel") String paymentChannel) throws JSONException {
-        return paymentService.getPayments(billHash, paymentChannel);
+        return paymentService.getPayments(payRequest,billHash, paymentChannel);
     }
 
     // non blocking http get request using reactive programming

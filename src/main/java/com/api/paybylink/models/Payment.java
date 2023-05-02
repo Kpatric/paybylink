@@ -1,5 +1,6 @@
 package com.api.paybylink.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Payment {
+    @JsonIgnore
     private String originatorMSISDN;
     private String payerClientCode;
     private String payerClientName;
